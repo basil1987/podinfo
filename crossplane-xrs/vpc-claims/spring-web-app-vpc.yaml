@@ -1,0 +1,40 @@
+---
+apiVersion: network.springexample.io/v1alpha1
+kind: vpcSubnet
+metadata:
+  name: xplane-vpc-subnets
+  namespace: default
+spec:
+  compositionSelector:
+    matchLabels:
+      springexample.io/provider: aws
+      springexample.io/environment: dev
+      springexample.io/network-id: "false"
+      service: vpcsubnet
+  resourceConfig:
+    providerConfigName: default
+    region: ap-northeast-1
+  parameters:
+    #vpc input
+    vpc-Name: myapp-vpc
+    vpc-cidrBlock: "10.20.0.0/17"   # 32768 IPs
+    vpc-amazonProvidedIpv6CidrBlock: false
+    vpc-enableDnsSupport: false
+    #public subnet1
+    publicSubnet1-cidrBlock: "10.20.0.0/21" # 2048 IPs
+    publicSubnet1-availabilityZone: ap-northeast-1a
+    #public subnet2
+    publicSubnet2-cidrBlock: "10.20.8.0/21" # 2048 IPs
+    publicSubnet2-availabilityZone: ap-northeast-1d
+    #public subnet3
+    publicSubnet3-cidrBlock: "10.20.16.0/21" # 2048 IPs
+    publicSubnet3-availabilityZone: ap-northeast-1c
+    #private subnet1
+    privateSubnet1-cidrBlock: "10.20.64.0/21" # 2048 IPs
+    privateSubnet1-availabilityZone: ap-northeast-1a
+    #private subnet2
+    privateSubnet2-cidrBlock: "10.20.72.0/21" # 2048 IPs
+    privateSubnet2-availabilityZone: ap-northeast-1d
+    #private subnet3
+    privateSubnet3-cidrBlock: "10.20.80.0/21" # 2048 IPs
+    privateSubnet3-availabilityZone: ap-northeast-1c
