@@ -1,0 +1,30 @@
+build docker image with dind:
+  stage: build
+  image: docker:19.03.1
+  services:
+  - docker:19.03.1-dind
+  variables:
+      DOCKER_TLS_CERTDIR: "/certs"
+  script:
+    - docker info
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" 
+    - docker build --pull -t "$CI_REGISTRY_IMAGE" .
+    - docker push "$CI_REGISTRY_IMAGE"
+
+
+deploy to kubernetes:
+  image:
+    name: bitnami/kubectl
+    entrypoint: ['']
+  script:
+    - kubectl apply -k kustomize 
+  before_script:
+    - kubectl config set-credentials agent:$AGENT_ID --token="ci:${AGENT_ID}:${CI_JOB_TOKEN}"
+    - kubectl config set-cluster gitlab --server="${K8S_PROXY_URL}"
+    - kubectl config set-context "$KUBE_CONTEXT" --cluster=gitlab --user="agent:${AGENT_ID}"
+    - kubectl config use-context "$KUBE_CONTEXT"
+  variables:
+    KUBE_CONTEXT: crossplane-cluster # The name to use for the new context
+    AGENT_ID: 69518
+    K8S_PROXY_URL: https://kas.gitlab.com/k8s-proxy/
+
